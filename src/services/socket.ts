@@ -1,9 +1,7 @@
 import type { ChatMessage } from "../features/chat/chatSlice";
 
 const WS_URL =
-  import.meta.env.MODE === "production"
-    ? "wss://chat-app-server-suij.onrender.com"
-    : "ws://localhost:8080";
+  import.meta.env.VITE_WS_URL ?? "ws://localhost:8080";
 
 export type WSIncoming =
   | { type: "HELLO"; payload: { id?: string; users?: string[]; message?: string } }
@@ -17,6 +15,7 @@ export type WSOutgoing =
 class ChatSocket {
   private socket: WebSocket | null = null;
 
+  /** store the URL explicitly – parameter-property style not allowed */
   private readonly url: string;
 
   constructor(url: string = WS_URL) {

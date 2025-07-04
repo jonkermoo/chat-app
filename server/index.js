@@ -1,10 +1,8 @@
 const WebSocket = require("ws");
-const http = require("http");
 const { randomUUID } = require("crypto");
 
 const PORT = process.env.PORT || 8080;
-const server = http.createServer();
-const wss  = new WebSocket.Server({ server });
+const wss  = new WebSocket.Server({ port: PORT });
 
 console.log(`[WS] Server started on port ${PORT}`);
 
