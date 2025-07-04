@@ -1,5 +1,10 @@
 import type { ChatMessage } from "../features/chat/chatSlice";
 
+const WS_URL =
+  import.meta.env.MODE === "production"
+    ? "wss://chat-app-server-suij.onrender.com"
+    : "ws://localhost:8080";
+
 export type WSIncoming =
   | { type: "HELLO"; payload: { id?: string; users?: string[]; message?: string } }
   | { type: "NEW_MESSAGE"; payload: ChatMessage }
@@ -11,64 +16,44 @@ export type WSOutgoing =
 
 class ChatSocket {
   private socket: WebSocket | null = null;
+
   private readonly url: string;
 
-  constructor(url = "ws://localhost:8080") {
-    this.url = url;
+  constructor(url: string = WS_URL) {
+    this.url = url;                 // ← set the field here
   }
 
-  isOpen(): boolean {
+  isOpen() {
     return this.socket?.readyState === WebSocket.OPEN;
   }
 
   connect(onMessage: (msg: WSIncoming) => void) {
-    if (this.socket) {
-      if (this.isOpen()) {
-        console.warn("[ChatSocket] already open—skipping connect()");
-        return;
-      }
-      if (this.socket.readyState === WebSocket.CONNECTING) {
-        console.warn("[ChatSocket] connection in progress—skipping connect()");
-        return;
-      }
+    if (this.socket && (this.isOpen() || this.socket.readyState === WebSocket.CONNECTING)) {
+      console.warn("[ChatSocket] already connecting/open");
+      return;
     }
 
     console.log("[ChatSocket] connecting to", this.url);
     this.socket = new WebSocket(this.url);
 
-    this.socket.addEventListener("open", () => {
-      console.log("[ChatSocket] open");
-    });
+    this.socket.addEventListener("open", () => console.log("[ChatSocket] open"));
 
     this.socket.addEventListener("message", async (event) => {
-      let text: string;
-
-      if (event.data instanceof Blob) {
-        text = await event.data.text();
-      } else {
-        text = event.data;
-      }
-
-      console.log("[ChatSocket] Raw message:", text);
-
+      const text = event.data instanceof Blob ? await event.data.text() : event.data;
       try {
-        const data = JSON.parse(text);
-        onMessage(data);
-      } catch (err) {
-        console.error("[ChatSocket] invalid JSON:", err);
+        onMessage(JSON.parse(text));
+      } catch {
+        console.error("[ChatSocket] invalid JSON:", text);
       }
     });
   }
 
   send(msg: WSOutgoing) {
-    if (this.isOpen()) {
-      this.socket!.send(JSON.stringify(msg));
-    } else {
-      console.warn("[ChatSocket] cannot send—socket not open");
-    }
+    this.isOpen()
+      ? this.socket!.send(JSON.stringify(msg))
+      : console.warn("[ChatSocket] cannot send—socket not open");
   }
 
-  /** Clean close */
   disconnect() {
     if (this.socket) {
       console.log("[ChatSocket] disconnecting");
@@ -76,9 +61,6 @@ class ChatSocket {
       this.socket = null;
     }
   }
-  
 }
-
-
 
 export const chatSocket = new ChatSocket();

@@ -1,8 +1,12 @@
 const WebSocket = require("ws");
+const http = require("http");
 const { randomUUID } = require("crypto");
 
-const wss = new WebSocket.Server({ port: 8080 });
-console.log("[WS] Server started on ws://localhost:8080");
+const PORT = process.env.PORT || 8080;
+const server = http.createServer();
+const wss  = new WebSocket.Server({ server });
+
+console.log(`[WS] Server started on port ${PORT}`);
 
 const clients = new Map();
 
@@ -14,25 +18,21 @@ function broadcast(obj, skip) {
 }
 
 wss.on("connection", (socket) => {
-  const userId = Math.random().toString(36).slice(2, 8);
+  const userId = randomUUID().slice(0, 6); 
   clients.set(socket, userId);
   console.log("[WS] Client connected:", userId);
 
   socket.send(
     JSON.stringify({
       type: "HELLO",
-      payload: {
-        id: userId,
-        users: Array.from(clients.values()),
-      },
+      payload: { id: userId, users: [...clients.values()] },
     })
   );
 
   broadcast({ type: "USER_JOIN", payload: { userId } }, socket);
 
-
   socket.on("message", (raw) => {
-    console.log("[WS] Received chat msg:", raw);
+    console.log("[WS] Received:", raw);
     broadcast(JSON.parse(raw));
   });
 
