@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+* {
+  margin: 0;
+  border: border-box;
+}
