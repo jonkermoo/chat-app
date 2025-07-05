@@ -27,6 +27,7 @@ function App() {
   /* -------- UI -------- */
   return (
     <div className="grid grid-cols-[1fr_4fr] h-[90vh] bg-gray-100 ">
+      <h1>TEST</h1>
       {/* Left column – Users list (placeholder for now) */}
       <div className="grid grid-rows-[1fr_24fr] flex">
         <div className="border-2 font-bold content-center items-center">
