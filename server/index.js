@@ -16,7 +16,7 @@ function broadcast(obj, skip) {
 }
 
 wss.on("connection", (socket) => {
-  const userId = randomUUID().slice(0, 6); 
+  const userId = "user"+randomUUID().slice(0, 6); 
   clients.set(socket, userId);
   console.log("[WS] Client connected:", userId);
 

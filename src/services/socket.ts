@@ -1,7 +1,7 @@
 import type { ChatMessage } from "../features/chat/chatSlice";
 
-const WS_URL =
-  import.meta.env.VITE_WS_URL ?? "ws://localhost:8080";
+const PRIMARY_WS_URL = import.meta.env.VITE_WS_URL;
+const FALLBACK_WS_URL = "ws://localhost:8080";
 
 export type WSIncoming =
   | { type: "HELLO"; payload: { id?: string; users?: string[]; message?: string } }
@@ -15,11 +15,11 @@ export type WSOutgoing =
 class ChatSocket {
   private socket: WebSocket | null = null;
 
-  /** store the URL explicitly – parameter-property style not allowed */
-  private readonly url: string;
+  private primaryUrl?: string = PRIMARY_WS_URL;
+  private fallbackUrl: string = FALLBACK_WS_URL;
 
-  constructor(url: string = WS_URL) {
-    this.url = url;                 // ← set the field here
+  constructor() {
+
   }
 
   isOpen() {
@@ -32,19 +32,39 @@ class ChatSocket {
       return;
     }
 
-    console.log("[ChatSocket] connecting to", this.url);
-    this.socket = new WebSocket(this.url);
+    const urls = [
+      ...(this.primaryUrl ? [this.primaryUrl] : []),
+      this.fallbackUrl,
+    ];
+    let attempt = 0;
 
-    this.socket.addEventListener("open", () => console.log("[ChatSocket] open"));
+    const tryConnect = () => {
+      const url = urls[attempt];
+      console.log("[ChatSocket] connecting to", url);
+      this.socket = new WebSocket(url);
 
-    this.socket.addEventListener("message", async (event) => {
-      const text = event.data instanceof Blob ? await event.data.text() : event.data;
-      try {
-        onMessage(JSON.parse(text));
-      } catch {
-        console.error("[ChatSocket] invalid JSON:", text);
-      }
-    });
+      this.socket.addEventListener("open", () => console.log("[ChatSocket] open"));
+
+      this.socket.addEventListener("message", async (event) => {
+        const text =
+          event.data instanceof Blob ? await event.data.text() : event.data;
+        try {
+          onMessage(JSON.parse(text));
+        } catch {
+          console.error("[ChatSocket] invalid JSON:", text);
+        }
+      });
+
+      this.socket.addEventListener("error", () => {
+        console.warn(`[ChatSocket] connection to ${url} failed`);
+        if (attempt < urls.length - 1) {
+          attempt++;
+          tryConnect();
+        }
+      });
+    };
+
+    tryConnect();
   }
 
   send(msg: WSOutgoing) {
