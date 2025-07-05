@@ -22,13 +22,11 @@ function App() {
     };
   }, [dispatch]);
 
-  <button disabled={!connected}>Send</button>;
-
   /* -------- UI -------- */
   return (
-    <div className="grid grid-cols-[1fr_4fr] h-[90vh] bg-gray-100 ">
-      {/* Left column – Users list (placeholder for now) */}
-      <div className="grid grid-rows-[1fr_24fr] flex">
+    <div className="grid grid-cols-[1fr_4fr] h-full bg-gray-100 ">
+      {/* Left column – Users list */}
+      <div className="grid grid-rows-[1fr_24fr]">
         <div className="border-2 font-bold content-center items-center">
           Users List
         </div>

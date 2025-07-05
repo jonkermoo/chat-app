@@ -6,10 +6,10 @@ export default function MessageList() {
   const myId = useAppSelector((s) => s.chat.userId);
 
   return (
-    <>
-      <div className="h-full overflow-y-auto">
-        <div className="font-bold">Messages</div>
+    <div className="h-full flex flex-col">
+      <div className="font-bold">Messages</div>
 
+      <div className="flex-1 overflow-y-auto px-2 py-1">
         {!connected && (
           <p className="text-sm text-orange-500">Connecting to server…</p>
         )}
@@ -45,6 +45,6 @@ export default function MessageList() {
           })}
         </div>
       </div>
-    </>
+    </div>
   );
 }
