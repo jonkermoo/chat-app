@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "./app/hooks";
+import { useAppDispatch } from "./app/hooks";
 import {
   connectRequested,
   disconnectRequested,
@@ -9,10 +9,10 @@ import "./styles/App.css";
 import UsersList from "./components/UsersList";
 import MessageList from "./components/MessageList";
 import MessageBar from "./components/MessageBar";
+import Misc from "./components/Misc";
 
 function App() {
   const dispatch = useAppDispatch();
-  const connected = useAppSelector((s) => s.chat.connected);
 
   useEffect(() => {
     dispatch(connectRequested());
@@ -45,9 +45,13 @@ function App() {
         </div>
       </div>
 
-      <div className="border-t-2 border-r-2 border-b-2"></div>
+      <div className="border-t-2 border-r-2 border-b-2 flex-row justify-start">
+        {/* misc */}
+        <Misc />
+      </div>
     </div>
   );
 }
 
 export default App;
+123;
