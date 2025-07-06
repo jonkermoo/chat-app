@@ -39,8 +39,8 @@ export default function Misc() {
         <input
           value={userID}
           onChange={(e) => setID(e.target.value)}
-          placeholder="   UserID"
-          className="border-2 text-md rounded-lg"
+          placeholder="UserID"
+          className="border-2 text-md rounded-lg pl-3"
           maxLength={16}
         />
       </form>
