@@ -21,6 +21,7 @@ import {
   addUser,
   removeUser,
   setUsers,
+  renameUserRequested,
 } from "./chatSlice";
 import type { SagaIterator } from "redux-saga";
 
@@ -74,9 +75,21 @@ function* readSocket(chan: EventChannel<any>): SagaIterator {
         continue;
       }
 
+      if (evt.type === "USER_RENAME") {
+        yield put(removeUser(evt.payload.oldId));
+        yield put(addUser(evt.payload.newId));
+        const myId: string = yield select((s) => s.chat.userId);
+        if (myId === evt.payload.oldId) {
+          yield put(setUserId(evt.payload.newId));
+        }
+        continue;
+      }
+
       if (evt.type === "NEW_MESSAGE") {
         yield put(enqueueMessage(evt.payload));
       }
+
+      
 
 
     }
@@ -118,7 +131,16 @@ function* handleConnection(): SagaIterator {
   }
 }
 
+function* writeRename(
+  action: ReturnType<typeof renameUserRequested>): SagaIterator {
+    chatSocket.send({
+      type: "USER_RENAME",
+      payload: { ...action.payload },
+    });
+  }
+
 export function* chatSaga() {
   yield fork(handleConnection);
   yield takeEvery(sendMessage.type, writeSocket);
+  yield takeEvery(renameUserRequested.type, writeRename);
 }

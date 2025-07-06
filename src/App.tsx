@@ -22,7 +22,6 @@ function App() {
     };
   }, [dispatch]);
 
-  /* -------- UI -------- */
   return (
     <div className="grid grid-cols-[1fr_6fr_0.8fr] h-full bg-gray-100 ">
       {/* Left column – Users list */}
@@ -54,4 +53,3 @@ function App() {
 }
 
 export default App;
-123;

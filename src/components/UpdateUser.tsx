@@ -1,32 +1,35 @@
 import { useState, type FormEvent } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { addUser, removeUser, setUserId } from "../features/chat/chatSlice";
+import {
+  addUser,
+  removeUser,
+  setUserId,
+  renameUserRequested,
+} from "../features/chat/chatSlice";
 
 export default function Misc() {
   const [userID, setID] = useState("");
   const dispatch = useAppDispatch();
 
-  const myId = useAppSelector((s) => s.chat.userId); // current visible id
-  const users = useAppSelector((s) => s.chat.users); // list shown in sidebar
+  const myId = useAppSelector((s) => s.chat.userId);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-
     const newId = userID.trim();
-    if (!newId || newId === myId) return; // nothing to do
 
-    // 1️⃣ update sidebar list locally
-    if (myId && users.includes(myId)) {
+    if (!newId || newId === myId) return;
+
+    if (myId) {
       dispatch(removeUser(myId));
     }
-    if (!users.includes(newId)) {
-      dispatch(addUser(newId));
-    }
-
-    // 2️⃣ set this client’s “visible” id
+    dispatch(addUser(newId));
     dispatch(setUserId(newId));
 
-    // 3️⃣ reset input
+    if (myId) {
+      dispatch(renameUserRequested({ oldId: myId, newId }));
+    } else {
+    }
+
     setID("");
   }
 
@@ -37,7 +40,7 @@ export default function Misc() {
           value={userID}
           onChange={(e) => setID(e.target.value)}
           placeholder="UserID"
-          className="border-2 h-[3vw] w-[8vw] text-sm px-2 rounded-lg"
+          className="border-2 h-[2vw] w-[6vw] text-sm px-2 rounded-lg"
           maxLength={16}
         />
       </form>

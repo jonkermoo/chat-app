@@ -51,7 +51,8 @@ const chatSlice = createSlice({
     connectRequested(_state) {},
     disconnectRequested(_state) {},
     sendMessage(_state, _action: PayloadAction<string>) {},
-  },
+    renameUserRequested(_state, _action: PayloadAction<{ oldId: string; newId: string }>) {},
+  }
 })
 
 export const {
@@ -65,5 +66,6 @@ export const {
   addUser,
   removeUser,
   setUsers,
+  renameUserRequested
 } = chatSlice.actions
 export default chatSlice.reducer;

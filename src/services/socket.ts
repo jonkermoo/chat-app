@@ -7,10 +7,12 @@ export type WSIncoming =
   | { type: "HELLO"; payload: { id?: string; users?: string[]; message?: string } }
   | { type: "NEW_MESSAGE"; payload: ChatMessage }
   | { type: "USER_JOIN"; payload: { userId: string } }
-  | { type: "USER_LEAVE"; payload: { userId: string } };
+  | { type: "USER_LEAVE"; payload: { userId: string } }
+  | { type: "USER_RENAME"; payload: { oldId: string; newId: string } };
 
 export type WSOutgoing =
-  | { type: "NEW_MESSAGE"; payload: ChatMessage };
+  | { type: "NEW_MESSAGE"; payload: ChatMessage }
+  | { type: "USER_RENAME";  payload: { oldId: string; newId: string } };
 
 class ChatSocket {
   private socket: WebSocket | null = null;
