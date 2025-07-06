@@ -34,13 +34,13 @@ export default function Misc() {
   }
 
   return (
-    <div className="items-center py-5">
-      <form onSubmit={handleSubmit}>
+    <div className="items-center py-5 px-2">
+      <form onSubmit={handleSubmit} className="flex justify-center">
         <input
           value={userID}
           onChange={(e) => setID(e.target.value)}
           placeholder="UserID"
-          className="border-2 h-[2vw] w-[6vw] text-sm px-2 rounded-lg"
+          className="border-2 text-sm px-2 rounded-lg w-80%"
           maxLength={16}
         />
       </form>
