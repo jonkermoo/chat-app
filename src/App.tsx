@@ -24,7 +24,7 @@ function App() {
 
   /* -------- UI -------- */
   return (
-    <div className="grid grid-cols-[1fr_4fr] h-full bg-gray-100 ">
+    <div className="grid grid-cols-[1fr_6fr_0.8fr] h-full bg-gray-100 ">
       {/* Left column – Users list */}
       <div className="grid grid-rows-[1fr_24fr]">
         <div className="border-2 font-bold content-center items-center">
@@ -39,11 +39,13 @@ function App() {
         <div className="border-t-2 border-r-2 border-b-2 overflow-y-auto p-1">
           <MessageList />
         </div>
-        <div className="border-b-2 border-r-2 overflow-y-auto p-1 flex">
+        <div className="border-b-2 border-r-2 p-1 flex">
           {/* Input bar */}
           <MessageBar />
         </div>
       </div>
+
+      <div className="border-t-2 border-r-2 border-b-2"></div>
     </div>
   );
 }

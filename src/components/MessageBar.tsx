@@ -19,7 +19,7 @@ export default function MessageBar() {
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
-          className="flex-1 rounded-lg border px-3 py-2 outline-none
+          className="flex-1 rounded-lg border px-3 py-1.5 outline-none
                        focus:ring-2 focus:ring-blue-600"
           placeholder="Type a message…"
         />
